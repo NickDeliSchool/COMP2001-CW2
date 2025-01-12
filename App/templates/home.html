@@ -10,12 +10,12 @@
     <h1>
         Hello, People!
     </h1>
-    {% for person in people %}
-    <h2>{{ person.fname }} {{ person.lname }}</h2>
+    {% for Trail in trails %}
+    <h2>{{ Trail.Trail_Name }} {{ Trail.Trail_Location }}</h2>
     <ul>
-        {% for note in person.notes %}
+        {% for Feature in Trail.Features %}
         <li>
-            {{ note.content }}
+            {{ Feature.Feature_Name }}
         </li>
         {% endfor %}
     </ul>

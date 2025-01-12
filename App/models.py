@@ -1,4 +1,4 @@
-# models.py
+#models.py
 
 import pytz
 from datetime import datetime
@@ -7,50 +7,83 @@ from marshmallow_sqlalchemy import fields
 from config import db, ma
 
 
-class Note(db.Model):
-    __tablename__ = "note"
-    id = db.Column(db.Integer, primary_key=True)
-    person_id = db.Column(db.Integer, db.ForeignKey("person.id"))
-    content = db.Column(db.String, nullable=False)
-    timestamp = db.Column(
-        db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
-        onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
-    )
+class Feature(db.Model):
+    __tablename__ = "Feature"
+    Feature_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Feature_Name = db.Column(db.String, nullable=False)
+    Trail_ID = db.Column(db.Integer, db.ForeignKey("Trail.Trail_ID"))
 
-class NoteSchema(ma.SQLAlchemyAutoSchema):
+
+class FeatureSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Note
+        model = Feature
         load_instance = True
-        sqla_session = db.session
+        sql_session = db.session
         include_fk = True
 
-class Person(db.Model):
-    __tablename__ = "person"
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    lname = db.Column(db.String(32), unique=True)
-    fname = db.Column(db.String(32))
-    timestamp = db.Column(
-        db.DateTime, default=lambda: datetime.now(pytz.timezone('Europe/London')),
-        onupdate=lambda: datetime.now(pytz.timezone('Europe/London'))
-    )
-    notes = db.relationship(
-        Note,
-        backref="person",
+class TrailUser(db.Model):
+    __tablename__ = "TrailUser"
+    UserID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    UserName = db.Column(db.String (50), nullable = False, unique = True)
+    Email_address = db.Column(db.String (50), nullable = False, unique = True)
+    UserRole = db.Column(db.String (20), nullable = False)
+
+class TrailUserSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = TrailUser
+        load_instance = True
+        sql_session = db.session
+
+class Trail(db.Model):
+    __tablename__ = "Trail"
+    Trail_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Trail_Name = db.Column(db.String (50), nullable = False)
+    Trail_Location = db.Column(db.String (50))
+    Trail_Rating = db.Column(db.Float)
+    Trail_Difficulty = db.Column(db.String (20))
+    Trail_Length_KM  = db.Column(db.Integer)
+    Trail_Elevation_Gain_M = db.Column(db.Integer)
+    Trail_Route_Type = db.Column(db.String (20))
+    Trail_Estimated_Finish_Time_Min = db.Column(db.Integer)
+    Trail_Summary = db.Column(db.String (1500))
+    Trail_Description = db.Column(db.String (2000))
+    Email_address = db.Column(db.String (50), db.ForeignKey("TrailUser.Email_address"), nullable = False)
+    Point1_lat = db.Column(db.Float)
+    Point1_long = db.Column(db.Float)
+    Point1_Desc = db.Column(db.String (30))
+    Point2_lat = db.Column(db.Float)
+    Point2_long = db.Column(db.Float)
+    Point2_Desc = db.Column(db.String (30))
+    Point3_lat = db.Column(db.Float)
+    Point3_long = db.Column(db.Float)
+    Point3_Desc = db.Column(db.String (30))
+    Point4_lat = db.Column(db.Float)
+    Point4_long = db.Column(db.Float)
+    Point4_Desc = db.Column(db.String (30))
+    Point5_lat = db.Column(db.Float)
+    Point5_long = db.Column(db.Float)
+    Point5_Desc = db.Column(db.String (30))
+    Features = db.relationship(
+        Feature,
+        backref="Trail",
         cascade="all, delete, delete-orphan",
         single_parent=True,
-        order_by="desc(Note.timestamp)"
+        order_by="Feature.Feature_Name"
     )
 
-class PersonSchema(ma.SQLAlchemyAutoSchema):
+class TrailSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Person
+        model = Trail
         load_instance = True
         sql_session = db.session
         include_relationships = True
+        include_fk = True
 
-    notes = fields.Nested(NoteSchema, many=True)
+    Features = fields.Nested(FeatureSchema, many=True)
 
-note_schema = NoteSchema()
 
-person_schema = PersonSchema()
-people_schema = PersonSchema(many=True)
+feature_schema = FeatureSchema()
+trail_user_schema = TrailUserSchema()
+
+trail_schema = TrailSchema()
+trails_schema = TrailSchema(many=True)
