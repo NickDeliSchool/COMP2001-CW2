@@ -11,10 +11,10 @@ servers:
 
 components:
   schemas:
-    Person:
+    Trail:
       type: "object"
       required:
-        - lname
+        - Trail_ID
       properties:
         fname:
           type: "string"

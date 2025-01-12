@@ -38,7 +38,7 @@ class Trail(db.Model):
     __tablename__ = "Trail"
     Trail_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Trail_Name = db.Column(db.String (50), nullable = False)
-    Trail_Location = db.Column(db.String (50))
+    Trail_Location = db.Column(db.String (100))
     Trail_Rating = db.Column(db.Float)
     Trail_Difficulty = db.Column(db.String (20))
     Trail_Length_KM  = db.Column(db.Integer)
