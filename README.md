@@ -5,4 +5,5 @@ The SQL Queries provided here are the scripts shown below the chosen table as I 
 
 Added the version 17 driver since the version 18 one wasn't working.
 
+IMPORTANT: I have the 17 driver in the dockerfile but it still has an issue. If it does not run, I followed the exact instructions and the microservice runs just fine if not through the dockerfile.
 
