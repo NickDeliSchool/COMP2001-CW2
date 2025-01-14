@@ -4,6 +4,11 @@ from flask import abort, make_response
 
 from config import db
 from models import TrailUser, trail_user_schema
+from flask import request
+
+def read_all():
+    trail_users = TrailUser.query.all()
+    return trail_user_schema.dump(trail_users)
 
 
 def read_one(email_address):
@@ -40,7 +45,8 @@ def delete(email_address):
     else:
         abort(404, f"Trail user with address {email_address} not found")
 
-def create(trailuser):
+def create():
+    trailuser = request.get_json()
     email_address = trailuser.get("email_address")
     existing_trailuser = TrailUser.query.filter(TrailUser.Email_address == email_address).one_or_none()
     user_name = trailuser.get("username")

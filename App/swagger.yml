@@ -1,9 +1,7 @@
-# swagger.yml
-
 openapi: 3.0.0
 info:
-  title: "RP Flask REST API"
-  description: "An API about people and notes"
+  title: "Trail Management API"
+  description: "API to manage Trails, Trail Users, and Features"
   version: "1.0.0"
 
 servers:
@@ -14,150 +12,356 @@ components:
     Trail:
       type: "object"
       required:
+        - Trail_Name
+        - Trail_Location
+        - OwnerID
+      properties:
+        Trail_Name:
+          type: "string"
+          example: "Dangerous Mountain Trail"
+        Trail_Location:
+          type: "string"
+          example: "Admasgar, Triton, Albania"
+        Trail_Rating:
+          type: "number"
+          format: "float"
+          example: 4.5
+        Trail_Difficulty:
+          type: "string"
+          example: "Hard"
+        Trail_Length_KM:
+          type: "integer"
+          example: 10
+        Trail_Elevation_Gain_M:
+          type: "integer"
+          example: 2500
+        Trail_Route_Type:
+          type: "string"
+          example: "Loop"
+        Trail_Estimated_Finish_Time_Min:
+          type: "integer"
+          example: 180
+        Trail_Summary:
+          type: "string"
+          example: "A journey for the hard-hearted, the mountain of Admasgar is known for its bandits and scenic views."
+        Trail_Description:
+          type: "string"
+          example: "This trail offers a mix of steep ascents and descents, cold-hearted bandits, dragons to be slayn and more, no one knows for sure."
+        OwnerID:
+          type: "integer"
+          example: 1
+        Point1_lat:
+          type: "number"
+          format: "float"
+          example: 40.73061
+        Point1_long:
+          type: "number"
+          format: "float"
+          example: -73.935242
+        Point1_Desc:
+          type: "string"
+          example: "The mouth of the giant."
+        Point2_lat:
+          type: "number"
+          format: "float"
+          example: 40.74061
+        Point2_long:
+          type: "number"
+          format: "float"
+          example: -73.945242
+        Point2_Desc:
+          type: "string"
+          example: "Gunther's camp."
+        Point3_lat:
+          type: "number"
+          format: "float"
+          example: 40.75061
+        Point3_long:
+          type: "number"
+          format: "float"
+          example: -73.955242
+        Point3_Desc:
+          type: "string"
+          example: "Dazed rock."
+        Point4_lat:
+          type: "number"
+          format: "float"
+          example: 40.76061
+        Point4_long:
+          type: "number"
+          format: "float"
+          example: -73.965242
+        Point4_Desc:
+          type: "string"
+          example: "Dragon's lair."
+        Point5_lat:
+          type: "number"
+          format: "float"
+          example: 40.77061
+        Point5_long:
+          type: "number"
+          format: "float"
+          example: -73.975242
+        Point5_Desc:
+          type: "string"
+          example: "Unknown."
+        Features:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/TrailFeatureSpecific"
+    FeatureSpecific:
+      type: "object"
+      required:
+        - Feature_Name
         - Trail_ID
       properties:
-        fname:
+        Feature_Name:
           type: "string"
-        lname:
+        Trail_ID:
+          type: "integer"
+
+    TrailFeatureSpecific:
+      type: "object"
+      required:
+        - Feature_Name
+      properties:
+        Feature_Name:
           type: "string"
-  parameters:
-    lname:
-      name: "lname"
-      description: "Last name of the person to get"
-      in: path
-      required: True
-      schema:
-        type: "string"
-    note_id:
-      name: "note_id"
-      description: "ID of the note"
-      in: path
-      required: true
-      schema:
-        type: "integer"
+
+    TrailUser:
+      type: "object"
+      required:
+        - UserName
+        - Email_address
+        - UserRole
+      properties:
+        UserName:
+          type: "string"
+        Email_address:
+          type: "string"
+        UserRole:
+          type: "string"
 
 paths:
-  /people:
+  /trails:
     get:
-      operationId: "people.read_all"
+      operationId: "Trails.read_all"
       tags:
-        - "People"
-      summary: "Read the list of people"
+        - "Trails"
+      summary: "Retrieve all trails"
       responses:
         "200":
-          description: "Successfully read people list"
-    post:
-      operationId: "people.create"
-      tags:
-        - People
-      summary: "Create a person"
-      requestBody:
-          description: "Person to create"
-          required: True
+          description: "Successfully retrieved all trails"
           content:
             application/json:
               schema:
-                x-body-name: "person"
-                $ref: "#/components/schemas/Person"
-      responses:
-        "201":
-          description: "Successfully created person"
-  /people/{lname}:
-    get:
-      operationId: "people.read_one"
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Trail"
+    post:
+      operationId: "Trails.create"
       tags:
-        - People
-      summary: "Read one person"
-      parameters:
-        - $ref: "#/components/parameters/lname"
-      responses:
-        "200":
-          description: "Successfully read person"
-    put:
-      tags:
-        - People
-      operationId: "people.update"
-      summary: "Update a person"
-      parameters:
-        - $ref: "#/components/parameters/lname"
-      responses:
-        "200":
-          description: "Successfully updated person"
+        - "Trails"
+      summary: "Create a new trail"
       requestBody:
+        description: "Trail object to create"
+        required: true
         content:
           application/json:
             schema:
-              x-body-name: "person"
-              $ref: "#/components/schemas/Person"
-    delete:
-      tags:
-        - People
-      operationId: "people.delete"
-      summary: "Delete a person"
-      parameters:
-        - $ref: "#/components/parameters/lname"
+              $ref: "#/components/schemas/Trail"
       responses:
-        "204":
-          description: "Successfully deleted person"
-  /notes:
-    post:
-      operationId: "notes.create"
+        "201":
+          description: "Successfully created trail"
+
+  /trails/{trail_id}:
+    get:
+      operationId: "Trails.read_one"
       tags:
-        - Notes
-      summary: "Create a note associated with a person"
-      requestBody:
-          description: "Note to create"
-          required: True
+        - "Trails"
+      summary: "Retrieve a single trail"
+      parameters:
+        - name: "trail_id"
+          in: path
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        "200":
+          description: "Successfully retrieved trail"
           content:
             application/json:
               schema:
-                x-body-name: "note"
-                type: "object"
-                properties:
-                  person_id:
-                    type: "integer"
-                  content:
-                    type: "string"
-      responses:
-        "201":
-          description: "Successfully created a note"
-  /notes/{note_id}:
-    get:
-      operationId: "notes.read_one"
-      tags:
-        - Notes
-      summary: "Read one note"
-      parameters:
-        - $ref: "#/components/parameters/note_id"
-      responses:
-        "200":
-          description: "Successfully read one note"
+                $ref: "#/components/schemas/Trail"
     put:
+      operationId: "Trails.update"
       tags:
-        - Notes
-      operationId: "notes.update"
-      summary: "Update a note"
+        - "Trails"
+      summary: "Update a trail"
       parameters:
-        - $ref: "#/components/parameters/note_id"
-      responses:
-        "200":
-          description: "Successfully updated note"
+        - name: "trail_id"
+          in: path
+          required: true
+          schema:
+            type: "integer"
       requestBody:
+        description: "Updated trail object"
+        required: true
         content:
           application/json:
             schema:
-              x-body-name: "note"
-              type: "object"
-              properties:
-                content:
-                  type: "string"
+              $ref: "#/components/schemas/Trail"
+      responses:
+        "200":
+          description: "Successfully updated trail"
     delete:
+      operationId: "Trails.delete"
       tags:
-        - Notes
-      operationId: "notes.delete"
-      summary: "Delete a note"
+        - "Trails"
+      summary: "Delete a trail"
       parameters:
-        - $ref: "#/components/parameters/note_id"
+        - name: "trail_id"
+          in: path
+          required: true
+          schema:
+            type: "integer"
       responses:
         "204":
-          description: "Successfully deleted note"
+          description: "Successfully deleted trail"
+
+  /trailusers:
+    get:
+      operationId: "TrailUsers.read_all"
+      tags:
+        - "Trail Users"
+      summary: "Retrieve all trail users"
+      responses:
+        "200":
+          description: "Successfully retrieved trail users"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/TrailUser"
+    post:
+      operationId: "TrailUsers.create"
+      tags:
+        - "Trail Users"
+      summary: "Create a new trail user"
+      requestBody:
+        description: "Trail user object to create"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrailUser"
+      responses:
+        "201":
+          description: "Successfully created trail user"
+
+  /trailusers/{user_id}:
+    get:
+      operationId: "TrailUsers.read_one"
+      tags:
+        - "Trail Users"
+      summary: "Retrieve a single trail user by ID"
+      parameters:
+        - name: "user_id"
+          in: path
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        "200":
+          description: "Successfully retrieved trail user"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrailUser"
+    put:
+      operationId: "TrailUsers.update"
+      tags:
+        - "Trail Users"
+      summary: "Update a trail user"
+      parameters:
+        - name: "user_id"
+          in: path
+          required: true
+          schema:
+            type: "integer"
+      requestBody:
+        description: "Updated trail user object"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrailUser"
+      responses:
+        "200":
+          description: "Successfully updated trail user"
+    delete:
+      operationId: "TrailUsers.delete"
+      tags:
+        - "Trail Users"
+      summary: "Delete a trail user"
+      parameters:  
+        - name: "user_id"
+          in: path
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        "204":
+          description: "Successfully deleted trail user"
+
+  /features:
+    post:
+      operationId: "Features.create"
+      tags:
+        - "Features"
+      summary: "Create a feature"
+      requestBody:
+        description: "Feature object to create"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeatureSpecific"
+      responses:
+        "201":
+          description: "Successfully created feature"
+
+  /features/{feature_id}:
+    get:
+      operationId: "Features.read_one"
+      tags:
+        - "Features"
+      summary: "Retrieve a single feature by ID"
+      parameters:
+        - name: "feature_id"
+          in: path
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        "200":
+          description: "Successfully retrieved feature"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeatureSpecific"
+    delete:
+      operationId: "Features.delete"
+      tags:
+        - "Features"
+      summary: "Delete a feature"
+      parameters:
+        - name: "feature_id"
+          in: path
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        "204":
+          description: "Successfully deleted feature"

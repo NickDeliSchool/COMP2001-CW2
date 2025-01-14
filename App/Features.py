@@ -4,7 +4,11 @@ from flask import abort, make_response
 
 from config import db
 from models import Feature, Trail, feature_schema
+from flask import request
 
+def read_all():
+    features = Feature.query.all()
+    return feature_schema.dump(features)
 
 def read_one(feature_id):
     feature = Feature.query.get(feature_id)
@@ -38,7 +42,8 @@ def delete(feature_id):
     else:
         abort(404, f"Feature with ID {feature_id} not found")
 
-def create(feature):
+def create():
+    feature = request.get_json()
     trail_id = feature.get("Trail_ID")
     trail = Trail.query.get(trail_id)
 

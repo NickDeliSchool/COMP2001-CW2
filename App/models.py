@@ -9,9 +9,10 @@ from config import db, ma
 
 class Feature(db.Model):
     __tablename__ = "Feature"
+    __table_args__ = {"schema": "CW2"}
     Feature_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Feature_Name = db.Column(db.String, nullable=False)
-    Trail_ID = db.Column(db.Integer, db.ForeignKey("Trail.Trail_ID"))
+    Trail_ID = db.Column(db.Integer, db.ForeignKey("CW2.Trail.Trail_ID"))
 
 
 class FeatureSchema(ma.SQLAlchemyAutoSchema):
@@ -23,6 +24,7 @@ class FeatureSchema(ma.SQLAlchemyAutoSchema):
 
 class TrailUser(db.Model):
     __tablename__ = "TrailUser"
+    __table_args__ = {"schema": "CW2"}
     UserID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     UserName = db.Column(db.String (50), nullable = False, unique = True)
     Email_address = db.Column(db.String (50), nullable = False, unique = True)
@@ -36,6 +38,7 @@ class TrailUserSchema(ma.SQLAlchemyAutoSchema):
 
 class Trail(db.Model):
     __tablename__ = "Trail"
+    __table_args__ = {"schema": "CW2"}
     Trail_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Trail_Name = db.Column(db.String (50), nullable = False)
     Trail_Location = db.Column(db.String (100))
@@ -47,7 +50,7 @@ class Trail(db.Model):
     Trail_Estimated_Finish_Time_Min = db.Column(db.Integer)
     Trail_Summary = db.Column(db.String (1500))
     Trail_Description = db.Column(db.String (2000))
-    Email_address = db.Column(db.String (50), db.ForeignKey("TrailUser.Email_address"), nullable = False)
+    OwnerID = db.Column(db.Integer, db.ForeignKey("CW2.TrailUser.Email_address"), nullable = False)
     Point1_lat = db.Column(db.Float)
     Point1_long = db.Column(db.Float)
     Point1_Desc = db.Column(db.String (30))
